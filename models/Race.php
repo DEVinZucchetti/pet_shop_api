@@ -1,25 +1,34 @@
 <?php
 
-class Race {
+class Race
+{
 
     private $id;
     private $name;
     private $created_at;
 
-    public function __construct($name) {
+    public function __construct($name)
+    {
         $this->name = $name;
     }
 
+    public function insert()
+    {
+        try {
+            $connection = new PDO("pgsql:host=localhost;dbname=api_pets", "docker", "docker");
 
-    public function insert(){
-       $connection = new PDO("pgsql:host=localhost;dbname=api_pets", "docker", "docker");
-       
-       $sql = "insert into races (name) values (:name_value)";
+            $sql = "insert into races (name) values (:name_value)";
 
-       $statement = $connection->prepare($sql);
-       $statement->bindParam(":name_value", $this->getName());
-       $statement->execute();
+            $statement = $connection->prepare($sql);
+            $statement->bindValue(":name_value", $this->getName());
 
+            $statement->execute();
+
+            return ['success' => true];
+        } catch (PDOException $error) {
+            debug($error->getMessage());
+            return ['success' => false];
+        }
     }
 
 
@@ -27,7 +36,7 @@ class Race {
     {
         return $this->id;
     }
- 
+
     public function getName()
     {
         return $this->name;
