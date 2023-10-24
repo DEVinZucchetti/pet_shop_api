@@ -7,7 +7,7 @@ class Race
     private $name;
     private $created_at;
 
-    public function __construct($name)
+    public function __construct($name = null)
     {
         $this->name = $name;
     }
@@ -31,6 +31,17 @@ class Race
         }
     }
 
+
+    public function findMany(){
+        $connection = new PDO("pgsql:host=localhost;dbname=api_pets", "docker", "docker");
+
+        $sql = "SELECT id,name from races";
+
+        $statement = $connection->prepare($sql);
+        $statement->execute();
+
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     public function getId()
     {

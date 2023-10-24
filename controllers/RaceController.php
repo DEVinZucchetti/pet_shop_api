@@ -21,8 +21,12 @@ class RaceController
             response(["message" => "Cadastrado com sucesso"], 201);
         } else {
             responseError("Não foi possível realizar o cadastro", 400);
-        }
-        
-       
+        } 
+    }
+
+    public function listAll(){
+        $race = new Race();
+        $races = $race->findMany();
+        response($races, 200);
     }
 }
