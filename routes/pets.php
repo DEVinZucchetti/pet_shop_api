@@ -8,4 +8,5 @@ $controller = new PetController();
 if ($method === 'POST') {
     $controller->createOne();
 } else if ($method === 'GET') {
+    $controller->listAll();
 }

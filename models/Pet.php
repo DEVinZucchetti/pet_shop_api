@@ -11,7 +11,7 @@ class Pet
 
     private $connection;
 
-    public function __construct($name, $race_id)
+    public function __construct($name = null, $race_id = null)
     {
         $this->name = $name;
         $this->race_id = $race_id;
@@ -20,25 +20,58 @@ class Pet
 
     public function insert()
     {
-        $sql = "insert into pets 
+        try {
+            $sql = "insert into pets 
             (
                 name,
-                race_id
+                race_id,
+                age,
+                size,
+                weight
             )
             values
             (
                 :name_value, 
-                :race_id_value
-                )
+                :race_id_value,
+                :age_value,
+                :size_value,
+                :weight_value
+            )
             ";
 
+            $statement = ($this->getConnection())->prepare($sql);
+
+            $statement->bindValue(":name_value", $this->getName());
+            $statement->bindValue(":race_id_value", $this->getRaceId());
+            $statement->bindValue(":age_value", $this->getAge());
+            $statement->bindValue(":size_value", $this->getSize());
+            $statement->bindValue(":weight_value", $this->getWeight());
+
+            $statement->execute();
+
+            return ['success' => true];
+        } catch (PDOException $error) {
+            debug($error->getMessage());
+            return ['success' => false];
+        }
+    }
+
+
+    public function findMany(){
+        $sql = "select
+                    pets.id,
+                    pets.name,
+                    size,
+                    races.name as nome_raca
+                        from pets
+                            join races on pets.race_id = races.id
+                            order by size DESC         
+        ";
+
         $statement = ($this->getConnection())->prepare($sql);
-
-        $statement->bindValue(":name_value", $this->getName());
-        $statement->bindValue(":race_id_value", $this->getRaceId());
-
         $statement->execute();
 
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
     function getId()
