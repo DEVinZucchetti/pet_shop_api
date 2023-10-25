@@ -1,5 +1,6 @@
 <?php
 require_once '../utils.php';
+require_once '../models/Pet.php';
 
 class PetController {
 
@@ -17,6 +18,8 @@ class PetController {
         if(!$race_id) responseError("ID da raça do pet é obrigatório", 400);
         // validar $size .......
 
+        $pet = new Pet($name, $race_id);
+        $pet->insert();
         
 
     }
