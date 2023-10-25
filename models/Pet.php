@@ -65,13 +65,39 @@ class Pet
                     races.name as nome_raca
                         from pets
                             join races on pets.race_id = races.id
-                            order by size DESC         
+                            order by name ASC         
         ";
 
         $statement = ($this->getConnection())->prepare($sql);
         $statement->execute();
 
         return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function findOne($id){
+        $sql = "SELECT * from pets where id = :id_value";
+
+        $statement = ($this->getConnection())->prepare($sql);
+        $statement->bindValue(":id_value", $id);
+        $statement->execute();
+
+        return $statement->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteOne($id){
+       try {
+        $sql = "delete from pets where id = :id_value";
+
+        $statement = ($this->getConnection())->prepare($sql);
+        $statement->bindValue(":id_value", $id);
+        $statement->execute();
+
+        return ['success' => true];
+
+        } catch (PDOException $error) {
+            debug($error->getMessage());
+            return ['success' => false];
+        }
     }
 
     function getId()
