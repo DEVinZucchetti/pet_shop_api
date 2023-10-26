@@ -119,6 +119,13 @@ class PetController
 
         $pet = new Pet();
 
-        $pet->updateOne($id, $body);
+        $result = $pet->updateOne($id, $body);
+
+        if ($result['success'] === true) {
+            response([], 200);
+        } else {
+            responseError('Não foi possível atualizar o item', 400);
+        }
+
     }
 }

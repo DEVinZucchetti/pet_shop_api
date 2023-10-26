@@ -154,8 +154,21 @@ class Pet
                 $data->age :
                 $petInDatabase['age']
         );
-        
+
         $statement->execute();
+
+        return ['success' => true];
+    }
+
+
+    public function dashboard(){
+        $sql = "select size, count(size) from pets
+        group by size
+        order by count(size) DESC";
+
+        $statement = ($this->getConnection())->prepare($sql);
+        $statement->execute();
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
     function getId()
