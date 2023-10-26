@@ -57,7 +57,8 @@ class Pet
     }
 
 
-    public function findMany(){
+    public function findMany()
+    {
         $sql = "select
                     pets.id,
                     pets.name,
@@ -74,7 +75,8 @@ class Pet
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function findOne($id){
+    public function findOne($id)
+    {
         $sql = "SELECT * from pets where id = :id_value";
 
         $statement = ($this->getConnection())->prepare($sql);
@@ -84,20 +86,76 @@ class Pet
         return $statement->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function deleteOne($id){
-       try {
-        $sql = "delete from pets where id = :id_value";
+    public function deleteOne($id)
+    {
+        try {
+            $sql = "delete from pets where id = :id_value";
 
-        $statement = ($this->getConnection())->prepare($sql);
-        $statement->bindValue(":id_value", $id);
-        $statement->execute();
+            $statement = ($this->getConnection())->prepare($sql);
+            $statement->bindValue(":id_value", $id);
+            $statement->execute();
 
-        return ['success' => true];
-
+            return ['success' => true];
         } catch (PDOException $error) {
             debug($error->getMessage());
             return ['success' => false];
         }
+    }
+
+    public function updateOne($id, $data)
+    {
+        $petInDatabase = $this->findOne($id);
+
+        $sql = "update pets 
+                        set 
+                        name=:name_value,
+                        race_id=:race_id_value,
+                        size=:size_value,
+                        weight=:weight_value,
+                        age=:age_value
+                where id = :id_value
+            ";
+
+        $statement = ($this->getConnection())->prepare($sql);
+
+        $statement->bindValue(":id_value", $id);
+
+        $statement->bindValue(
+            ":name_value",
+            isset($data->name) ?
+                $data->name :
+                $petInDatabase['name']
+        );
+
+        $statement->bindValue(
+            ":race_id_value",
+            isset($data->race_id) ?
+                $data->race_id :
+                $petInDatabase['race_id']
+        );
+
+        $statement->bindValue(
+            ":size_value",
+            isset($data->size) ?
+                $data->size :
+                $petInDatabase['size']
+        );
+
+        $statement->bindValue(
+            ":weight_value",
+            isset($data->weight)
+                ? $data->weight :
+                $petInDatabase['weight']
+        );
+
+        $statement->bindValue(
+            ":age_value",
+            isset($data->age) ?
+                $data->age :
+                $petInDatabase['age']
+        );
+        
+        $statement->execute();
     }
 
     function getId()
