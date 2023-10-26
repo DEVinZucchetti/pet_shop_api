@@ -1,6 +1,7 @@
 <?php
 require_once '../utils.php';
 require_once '../models/Race.php';
+require_once '../models/RaceDAO.php';
 
 class RaceController
 {
@@ -15,7 +16,9 @@ class RaceController
 
         $race = new Race($name);
 
-        $result = $race->insert();
+        $raceDAO = new RaceDAO();
+
+        $result = $raceDAO->insert($race);
 
         if($result['success'] === true) {
             response(["message" => "Cadastrado com sucesso"], 201);
@@ -25,8 +28,8 @@ class RaceController
     }
 
     public function listAll(){
-        $race = new Race();
-        $races = $race->findMany();
+        $raceDAO = new RaceDAO();
+        $races = $raceDAO->findMany();
         response($races, 200);
     }
 }

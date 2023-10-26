@@ -1,7 +1,5 @@
 <?php
 
-require_once './Pet.php';
-
 class PetDAO
 {
     private $connection;
